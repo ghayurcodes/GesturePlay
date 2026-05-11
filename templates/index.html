@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GesturePlay — Hand-Controlled Media</title>
+    <meta name="description" content="Control your media with hand gestures using webcam">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header" id="app-header">
+        <div class="header-left">
+            <div class="logo">
+                <span class="logo-icon">◈</span>
+                <h1>GesturePlay</h1>
+            </div>
+            <span class="divider">|</span>
+            <span class="subtitle">Hand-Controlled Media</span>
+        </div>
+        <div class="header-right">
+            <div class="status-pill" id="status-pill">
+                <span class="status-dot" id="status-dot"></span>
+                <span class="status-text" id="status-text">Offline</span>
+            </div>
+            <div class="fps-display" id="fps-display">-- FPS</div>
+            <button class="btn-main" id="btn-toggle" onclick="toggleDetection()">
+                Start Detection
+            </button>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main class="main">
+
+        <!-- Left: Camera -->
+        <section class="panel camera-panel">
+            <div class="panel-header">
+                <span class="panel-title">Live Feed</span>
+            </div>
+            <div class="camera-wrap" id="camera-wrap">
+                <div class="cam-placeholder" id="cam-placeholder">
+                    <div class="cam-icon">◉</div>
+                    <p>Click <strong>Start Detection</strong> to begin</p>
+                    <span class="cam-hint">Ensure your webcam is connected</span>
+                </div>
+                <img id="camera-feed" class="camera-feed hidden" src="" alt="Live gesture feed">
+            </div>
+
+            <!-- Gesture readout below camera -->
+            <div class="gesture-readout" id="gesture-readout">
+                <div class="readout-left">
+                    <span class="readout-emoji" id="readout-emoji">—</span>
+                </div>
+                <div class="readout-right">
+                    <span class="readout-gesture" id="readout-gesture">No hand detected</span>
+                    <span class="readout-action" id="readout-action">Waiting...</span>
+                </div>
+                <div class="finger-dots" id="finger-dots">
+                    <div class="fdot" id="fd-0" title="0 fingers — Fist"></div>
+                    <div class="fdot" id="fd-1" title="1 finger — Skip Back"></div>
+                    <div class="fdot" id="fd-2" title="2 fingers — Speed 2x"></div>
+                    <div class="fdot" id="fd-3" title="3 fingers — Skip Fwd"></div>
+                    <div class="fdot" id="fd-4" title="4 fingers — Play"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right: Config + Log -->
+        <section class="right-col">
+
+            <!-- Gesture Map -->
+            <div class="panel" id="config-panel">
+                <div class="panel-header">
+                    <span class="panel-title">Gesture Map</span>
+                    <span class="panel-hint">Customize each gesture</span>
+                </div>
+                <div class="gesture-table" id="gesture-table">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Action Log -->
+            <div class="panel" id="log-panel">
+                <div class="panel-header">
+                    <span class="panel-title">Action Log</span>
+                    <button class="btn-ghost" onclick="clearLog()">Clear</button>
+                </div>
+                <div class="log-body" id="log-body">
+                    <div class="log-empty">No actions yet</div>
+                </div>
+            </div>
+
+            <!-- How To -->
+            <div class="panel how-panel">
+                <div class="panel-header">
+                    <span class="panel-title">How To Use</span>
+                </div>
+                <ol class="how-list">
+                    <li>Click <strong>Start Detection</strong> above</li>
+                    <li>Open <strong>YouTube</strong> or any media player</li>
+                    <li>Click on the media player to <strong>focus</strong> it</li>
+                    <li>Perform gestures in front of your webcam</li>
+                    <li>Hold each gesture for ~0.35s to trigger it</li>
+                </ol>
+                <div class="how-note">
+                    Keys are sent to the <em>active window</em> — keep your media player focused!
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Toast -->
+    <div id="toast-root"></div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

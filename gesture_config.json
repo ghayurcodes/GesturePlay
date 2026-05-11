@@ -1,0 +1,98 @@
+{
+    "gestures": {
+        "fist": {
+            "label": "Fist",
+            "emoji": "✊",
+            "fingers": "0 fingers",
+            "action": "fullscreen",
+            "description": "Fullscreen"
+        },
+        "index_up": {
+            "label": "One Finger",
+            "emoji": "☝️",
+            "fingers": "1 finger",
+            "action": "skip_bwd",
+            "description": "Skip Backward 10s"
+        },
+        "peace": {
+            "label": "Two Fingers",
+            "emoji": "✌️",
+            "fingers": "2 fingers",
+            "action": "speed_2x",
+            "description": "Speed 2x (hold)"
+        },
+        "three_up": {
+            "label": "Three Fingers",
+            "emoji": "🤟",
+            "fingers": "3 fingers",
+            "action": "skip_fwd",
+            "description": "Skip Forward 10s"
+        },
+        "open_palm": {
+            "label": "Open Palm",
+            "emoji": "✋",
+            "fingers": "4 fingers",
+            "action": "play_pause",
+            "description": "Play / Pause Toggle"
+        }
+    },
+    "available_actions": {
+        "play_pause": {
+            "label": "Play / Pause Toggle",
+            "keys": [
+                "space"
+            ]
+        },
+        "speed_2x": {
+            "label": "Speed 2x (hold)",
+            "keys": [
+                "speed_2x"
+            ]
+        },
+        "skip_fwd": {
+            "label": "Skip Forward 10s",
+            "keys": [
+                "l"
+            ]
+        },
+        "skip_bwd": {
+            "label": "Skip Backward 10s",
+            "keys": [
+                "j"
+            ]
+        },
+        "vol_up": {
+            "label": "Volume Up",
+            "keys": [
+                "up"
+            ]
+        },
+        "vol_down": {
+            "label": "Volume Down",
+            "keys": [
+                "down"
+            ]
+        },
+        "fullscreen": {
+            "label": "Fullscreen",
+            "keys": [
+                "f"
+            ]
+        },
+        "mute": {
+            "label": "Mute / Unmute",
+            "keys": [
+                "m"
+            ]
+        },
+        "none": {
+            "label": "No Action",
+            "keys": []
+        }
+    },
+    "settings": {
+        "cooldown_seconds": 1.5,
+        "detection_confidence": 0.8,
+        "tracking_confidence": 0.5
+    }
+}
