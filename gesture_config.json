@@ -25,8 +25,8 @@
             "label": "Three Fingers",
             "emoji": "🤟",
             "fingers": "3 fingers",
-            "action": "skip_fwd",
-            "description": "Skip Forward 10s"
+            "action": "mute",
+            "description": "Mute / Unmute"
         },
         "open_palm": {
             "label": "Open Palm",
@@ -93,6 +93,19 @@
     "settings": {
         "cooldown_seconds": 1.5,
         "detection_confidence": 0.8,
-        "tracking_confidence": 0.5
+        "tracking_confidence": 0.5,
+        "window_filter_enabled": true,
+        "target_windows": [
+            "youtube",
+            "vlc",
+            "media player",
+            "netflix",
+            "spotify",
+            "movies & tv",
+            "groove music",
+            "plex",
+            "prime video",
+            "disney+"
+        ]
     }
 }

@@ -1,7 +1,9 @@
 """
-gesture_detector.py - Stabilized detector with neutral-gap gating.
-After any trigger, requires hand to be absent 0.6s before next trigger.
-This kills ALL transition-state false triggers (the play/pause jumble).
+gesture_detector.py -- Real-time hand gesture detection using MediaPipe.
+
+Uses an 8-frame stability buffer to filter flicker, per-gesture hold
+thresholds to prevent accidental triggers, and neutral-gap gating
+(0.35 s hand-absent requirement) to block transition-state false positives.
 """
 import cv2
 import mediapipe as mp
@@ -40,6 +42,13 @@ class GestureDetector:
         self._frame_count = 0
         self._fps_timer   = time.time()
         self.lm_list = []
+        self._action_labels = {}
+
+    def set_action_labels(self, gesture_mappings):
+        """Update overlay labels from config mappings so the feed matches the UI."""
+        self._action_labels = {}
+        for gesture, info in gesture_mappings.items():
+            self._action_labels[gesture] = info.get("description", "")
 
     def detect(self, frame):
         frame = cv2.flip(frame, 1)
@@ -126,13 +135,12 @@ class GestureDetector:
         if not self.lm_list:
             return 0
         fingers = []
-        # Thumb: Check horizontal distance between tip (4) and base (2)
-        # Using a relative threshold based on hand size (distance between 0 and 5)
+        # Thumb: horizontal distance between tip (4) and IP joint (2)
         hand_size = ((self.lm_list[0][1]-self.lm_list[5][1])**2 + (self.lm_list[0][2]-self.lm_list[5][2])**2)**0.5
         if abs(self.lm_list[4][1] - self.lm_list[2][1]) > hand_size * 0.4:
             fingers.append(1)
-        
-        # 4 Fingers: Check if tip is above knuckle
+
+        # Index, Middle, Ring, Pinky: tip above PIP joint means extended
         for i in range(1, 5):
             if self.lm_list[self.TIP_IDS[i]][2] < self.lm_list[self.TIP_IDS[i]-2][2]:
                 fingers.append(1)
@@ -142,15 +150,20 @@ class GestureDetector:
         return {0:"fist", 1:"index_up", 2:"peace", 3:"three_up", 4:"open_palm", 5:"open_palm"}.get(count, None)
 
     def _draw_overlay(self, frame, gesture, count):
-        labels = {
-            "fist":      ("FIST  - Play/Pause",  (100,100,100)),
-            "index_up":  ("1 FIN - Skip Back",   (140,140,140)),
-            "peace":     ("2 FIN - Speed 2x",    (160,160,160)),
-            "three_up":  ("3 FIN - Skip Fwd",    (160,160,160)),
-            "open_palm": ("PALM  - Mute",         (200,200,200)),
+        gesture_names = {
+            "fist": "FIST", "index_up": "1 FIN", "peace": "2 FIN",
+            "three_up": "3 FIN", "open_palm": "PALM",
         }
-        if gesture in labels:
-            text, color = labels[gesture]
+        colors = {
+            "fist": (100,100,100), "index_up": (140,140,140),
+            "peace": (160,160,160), "three_up": (160,160,160),
+            "open_palm": (200,200,200),
+        }
+        if gesture in gesture_names:
+            name = gesture_names[gesture]
+            action = self._action_labels.get(gesture, "")
+            text = f"{name}  - {action}" if action else name
+            color = colors.get(gesture, (150,150,150))
             (tw, th), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.85, 2)
             cv2.rectangle(frame, (10,10), (22+tw, 46), (25,25,25), -1)
             cv2.putText(frame, text, (16,36), cv2.FONT_HERSHEY_SIMPLEX, 0.85, color, 2, cv2.LINE_AA)

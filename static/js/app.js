@@ -1,8 +1,8 @@
-/* GesturePlay — Frontend Logic (4-gesture version) */
+/* GesturePlay — Frontend Logic (5-gesture version) */
 
 let isActive = false;
 let pollTimer = null;
-let lastLogCount = 0;
+let lastLogTimestamp = 0;
 let availableActions = {};
 
 const ICONS = {
@@ -40,7 +40,6 @@ async function toggleDetection() {
         isActive   = data.active;
 
         const pill    = document.getElementById("status-pill");
-        const dot     = document.getElementById("status-dot");
         const txt     = document.getElementById("status-text");
         const feed    = document.getElementById("camera-feed");
         const holder  = document.getElementById("cam-placeholder");
@@ -95,10 +94,16 @@ async function pollStatus() {
         // Gesture readout
         updateReadout(data.gesture, data.finger_count);
 
-        // Log
-        if (data.recent_actions && data.recent_actions.length !== lastLogCount) {
-            renderLog(data.recent_actions);
-            lastLogCount = data.recent_actions.length;
+        // Log — compare newest entry timestamp, not count
+        if (data.recent_actions && data.recent_actions.length > 0) {
+            const newestTime = data.recent_actions[0].time || 0;
+            if (newestTime !== lastLogTimestamp) {
+                renderLog(data.recent_actions);
+                lastLogTimestamp = newestTime;
+            }
+        } else if (lastLogTimestamp !== 0) {
+            renderLog([]);
+            lastLogTimestamp = 0;
         }
     } catch (_) { /* silent fail */ }
 }
@@ -160,7 +165,7 @@ function renderLog(actions) {
 
 async function clearLog() {
     document.getElementById("log-body").innerHTML = '<div class="log-empty">No actions yet</div>';
-    lastLogCount = 0;
+    lastLogTimestamp = 0;
     try {
         await fetch("/api/clear_log", { method: "POST" });
     } catch (_) { /* silent fail */ }

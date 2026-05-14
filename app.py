@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-app.py -- GesturePlay Flask Application (Performance-Optimized)
+app.py -- GesturePlay Flask Application
 
-Uses collections.deque(maxlen=1) for zero-wait frame sharing between
-the capture thread and the streaming generator -- much faster than locks.
+Serves the web dashboard, streams the annotated webcam feed as MJPEG,
+and exposes REST API endpoints for gesture configuration and status.
+Uses a deque(maxlen=1) for zero-wait frame sharing between threads.
 """
 
 import cv2
@@ -14,11 +15,7 @@ from flask import Flask, Response, render_template, request, jsonify
 
 from gesture_detector import GestureDetector
 from gesture_controller import GestureController
-from config_manager import (
-    load_config,
-    update_gesture_action,
-    get_settings,
-)
+from config_manager import load_config, update_gesture_action
 
 # ─── Flask App ────────────────────────────────────────────────────────────────
 
@@ -59,6 +56,7 @@ def detection_loop():
         tracking_confidence=0.5,
     )
     controller = GestureController()
+    detector.set_action_labels(controller.gesture_mappings)
 
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
@@ -212,6 +210,8 @@ def api_update_config():
     if result is True:
         if controller:
             controller.reload_mappings()
+        if detector:
+            detector.set_action_labels(controller.gesture_mappings)
         return jsonify({"success": True})
     else:
         return jsonify({"error": result}), 400
